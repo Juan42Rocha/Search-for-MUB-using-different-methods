@@ -9,9 +9,9 @@ include("functions.jl")
 
 function main()
     
-    d = 2;
-    n = d;
-    kmax = 15;
+    d = 6;
+    n = 2;
+    kmax = 3;
     M = zeros(Complex,d,d,n);
 
     #M[:,:,1] = [1 1 ; 1  -1]./sqrt(2);

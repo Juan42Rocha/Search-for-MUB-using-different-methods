@@ -26,11 +26,11 @@ end
 #
 function IsBasis(M);
     d,d,n=size(M);
-
+    M1 = zeros(d,d);
     t = 0;
-    for i in 1:d;
+    for i in 1:n;
         M1 = M[:,:,i];
-        t += sum(abs.(I(d)-abs.(M1'*M1)));
+        t += real(sum(abs.(I(d)-abs.(M1'*M1))));
     end
 
     return t;
@@ -72,6 +72,7 @@ function VariaConf(d,n,k)
         if (tv < Mubval) & (tb<1e-13);
             Mubval = tv;
             Confval = i;
+            println( i/(k^(d^2*n)-1))
         end
         if (tv < Mubval) ;
             Mubval2 = tv;
