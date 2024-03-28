@@ -45,13 +45,14 @@ end
 # Generate one configurations of matrices
 # ==============================================================
 function GeneraOneMatConf(d,n,k,conf)
-    #M = zeros(Complex,d,d,n);
+    M = zeros(Complex,d,d,n);
+    M[1,:,:] .= 1;#ones(1,d,n);
     #k = size(phases,1);
     #@show(d,n,k,conf)
-    t = digits(conf,base=k,pad=d^2*n);
-    p = reshape(t,d,d,n);
+    t = digits(conf,base=k,pad=d*(d-1)*n);
+    p = reshape(t,d-1,d,n);
     
-    M = exp.(im*2*pi*p/k);
+    M[2:d,:,:] = exp.(im*2*pi*p/k);
     return M
 end
 
@@ -68,7 +69,7 @@ function VariaConf(d,n,k)
     Confval = 0;
     Confval2 = 0;
 
-    for i in 0:k^(d^2*n)-1;
+    for i in 0:k^(d*(d-1)*n)-1;
         M = GeneraOneMatConf(d,n,k,i)./sqrt(d);
         tv = Mubness(M);
         tb = IsBasis(M);
