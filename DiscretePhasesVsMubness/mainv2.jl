@@ -13,9 +13,9 @@ include("functionsv2.jl")
 
 function main()
     
-    d = 6;
+    d = 2;
     n = 2;
-    kmax = 6;
+    kmax = 14;
     M = zeros(Complex,d,d,n);
 
     #M[:,:,1] = [1 1 ; 1  -1]./sqrt(2);
