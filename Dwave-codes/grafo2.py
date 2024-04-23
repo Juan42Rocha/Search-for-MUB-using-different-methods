@@ -30,31 +30,33 @@ def n_graph(n):
                  2) DWaveSampler - QPU
                  3) SimulatedAnnealingSampler
     """
-
+    # read graph
     RelPad = np.genfromtxt('RelPad.txt', delimiter=',')
     Jlr = np.genfromtxt('Jlr.txt', delimiter=',')
     Jlr = -Jlr
 
     bqm = BinaryQuadraticModel({}, {}, 0, 'SPIN')
     bqm.offset = 0
-    itr = 200
+    # iterations in the anealing
+    itr = 20#200                    
 
     # Build a graph with from RelPad & Jlr
     for i in range(n):
         bqm.add_variable(i, 0)
-        bqm.add_interaction(i, RelPad[i,0]-1, Jlr[i,0])
-        bqm.add_interaction(i, RelPad[i,1]-1, Jlr[i,1])
+    #   bqm.add_interaction(i, RelPad[i,0]-1, Jlr[i,0])
+    #    bqm.add_interaction(i, RelPad[i,1]-1, Jlr[i,1])
+        bqm.add_interaction(i, (i+1)%n, Jlr[i,0])     # small graph for test
     print(bqm)
 
     print('solver started...')
     start_time = time()
 
     
-    # QPU
+    # QPU selecto the sampler
     # sampler = EmbeddingComposite(DWaveSampler(solver=dict(topology__type='pegasus')))
     # sampler = EmbeddingComposite(DWaveSampler(solver=dict(topology__type='zephyr')))
     sampler = EmbeddingComposite(DWaveSampler())   
-    sampleset = sampler.sample(bqm, num_reads=itr, label=f'{n} node Graph {start_time}')
+    sampleset = sampler.sample(bqm, num_reads=itr, label=f'{n} node Graph test {start_time}')
 
     # Hybrid Solver
     # sampler = LeapHybridSampler()
@@ -185,7 +187,7 @@ def plot_graph(n, sol):
 
 if __name__ == "__main__":
 
-    n = 100
+    n = 8
 
     print("Building graph with {n} nodes.".format(n=n))
     solution = n_graph(n)
