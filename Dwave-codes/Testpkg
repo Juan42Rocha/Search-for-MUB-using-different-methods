@@ -1,0 +1,8 @@
+import numpy as np
+from collections import Counter
+
+
+import matplotlib
+matplotlib.use("agg")    # must select backend before importing pyplot
+
+t = np.zeros([2,2])
