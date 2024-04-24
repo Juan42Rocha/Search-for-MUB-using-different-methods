@@ -22,7 +22,7 @@ from time import time
 import networkx as nx
 
 
-def n_graph(n):
+def n_graph(n,fname,b,itr):
     """Returns a potential solution to the n-queens problem in a dictionary, where
     the keys are qubit id and value on or off
 
@@ -35,23 +35,27 @@ def n_graph(n):
                  3) SimulatedAnnealingSampler
     """
     # read graph
-    RelPad = np.genfromtxt('RelPad.txt', delimiter=',')
-    Jlr = np.genfromtxt('Jlr.txt', delimiter=',')
-    Jlr = -Jlr
-
+    Jik = np.genfromtxt("../HamiltonianForIsingDwave/"+fname)#, delimiter=" ") 
+  
     bqm = BinaryQuadraticModel({}, {}, 0, 'SPIN')
     bqm.offset = 0
     # iterations in the anealing
-    itr = 20#200    # más interacciones más tiempo?                    
+    #itr = 1#200    # más interaciones más tiempo?                    
 
     # Build a graph with from RelPad & Jlr
+    fl = 0
     for i in range(n):
-        bqm.add_variable(i, 0)   
-    #   bqm.add_interaction(i, RelPad[i,0]-1, Jlr[i,0])
-    #    bqm.add_interaction(i, RelPad[i,1]-1, Jlr[i,1])
-        bqm.add_interaction(i, (i+1)%n, Jlr[i,0])     # small graph for test
+        bqm.add_variable(i, b)
+        for k in range(n):
+            if Jik[i,k] > 1e-14:
+                bqm.add_interaction(i, k, Jik[i,k])     # small graph for test
+                fl = 1
     print(bqm)
 
+    if fl == 0:
+        print("Error en Jik")
+        exit()
+    
     print('solver started...')
     start_time = time()
 
@@ -60,7 +64,7 @@ def n_graph(n):
     # sampler = EmbeddingComposite(DWaveSampler(solver=dict(topology__type='pegasus')))
     # sampler = EmbeddingComposite(DWaveSampler(solver=dict(topology__type='zephyr')))
     sampler = EmbeddingComposite(DWaveSampler())   
-    sampleset = sampler.sample(bqm, num_reads=itr, label=f'{n} node Graph test {start_time}')
+    sampleset = sampler.sample(bqm, num_reads=itr, label=f'{n} Ortogonalidad {start_time}')
 
     # Hybrid Solver
     # sampler = LeapHybridSampler()
@@ -75,18 +79,18 @@ def n_graph(n):
     print(solver_time)
     # print('sampleset.info', sampleset.info)
 
-    f = open("sampleset.txt", "w")
+    f = open("ssDHoHu2n1k2a.txt", "w")
     for sample in sampleset:
         f.write(str(sample)+'\n')
     f.close()
 
-    f = open("sampleset2.txt", "w")
+    f = open("ssDHoHu2n1k2b.txt", "w")
     f.write(str(sampleset))
     f.close()
 
     sample = sampleset.first.sample
     # print("Sample:\n", sample)
-    f = open("outGraph.txt", "a")
+    f = open("outGraph"+fname+".txt", "a")
     f.write(f'{n} node graph\n')
     f.write(str(sample)+'\n')
     f.write(solver_time + '\n')
@@ -191,20 +195,29 @@ def plot_graph(n, sol):
 
 if __name__ == "__main__":
 
-    n = 8
+    d = 2
+    N = 1
+    k = 2
+    Nqb = d*N*k**N
 
+  # DHoHu2n1k2.dat   DHoHu2n1k4.dat      DHoHuHm2n2k4.dat
+    # solo orth        ort en 4 fases      orth, mubs en 4 fases
+    #    4                  26/                  42         valores para b
+    fname = "DHoHu2n1k2.dat"
+    b = 4
+    iter = 
     print("Building graph with {n} nodes.".format(n=n))
-    solution = n_graph(n)
+    solution = n_graph(Nqb,fname,b, itr)
 
-    if is_valid_solution(n, solution):
-        write = "Solution is valid."
-    else:
-        write = "Solution is invalid."
-    
-    print(write)
-    f = open("outGraph.txt", "a")
-    f.write(write + '\n\n')
-    f.close()
+ #   if is_valid_solution(n, solution):
+ #       write = "Solution is valid."
+ #   else:
+ #        write = "Solution is invalid."
+ #   
+ #   print(write)
+ #   f = open("outGraph.txt", "a")
+ #   f.write(write + '\n\n')
+ #   f.close()
 
-    file_name = plot_graph(n, solution)
-    print("Graph created. See: {}".format(file_name))
+ #   file_name = plot_graph(n, solution)
+ #   print("Graph created. See: {}".format(file_name))
