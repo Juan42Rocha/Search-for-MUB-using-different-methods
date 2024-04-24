@@ -32,10 +32,10 @@ function findMS(H,Jsi,Mts,temp);
     t = 0;
     Nqb, Nqb = size(H);
     E =[] #zeros(Nqb*Mts+1,1);
-    t = rand(collect(0:Nqb^2),1);
+   # t = rand(collect(0:Nqb^2),1);
    # @show(t)
-    st0 = VecConf.(t, Nqb )[1];
-    st = VecConf(88, Nqb );
+    st0 = rand([-1 1],Nqb); #VecConf.(t, Nqb )[1];
+    st = rand([-1 1],Nqb);#VecConf(88, Nqb );
    # @show(st)
     Eo = Energiast(st0,H,Jsi);
     E  = push!(E,Eo);

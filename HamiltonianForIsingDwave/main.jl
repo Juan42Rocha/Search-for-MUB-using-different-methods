@@ -56,12 +56,12 @@ end
 
 
 function saveH()
-    d = 2 ; n = 2; k = 4;
+    d = 2 ; n = 2; k =4 ;
     Ho = HOrth(d,n,k,0,1);
     Hi = Hising(d,n,k,1);
     Hu = oneUpforVec(d,n,k,0,1);
     if n>1 
-        Hm = HMubs(d,n,k,0,1)
+        Hm = HMubs(d,n,k,0,1);
     end
 
     # Horht= Ortogonalidad(d,k,0,1);
@@ -74,8 +74,24 @@ function saveH()
     # end  
  
    
-    open("HoHm"*string(d)*"n"*string(n)*"k"*string(k)*".dat","w") do io
-        writedlm(io,Ho+Hm)
+    open("HoHi"*string(d)*"n"*string(n)*"k"*string(k)*".dat","w") do io
+        writedlm(io,Ho+Hi)
     end
 
+end
+
+
+function Dsave();
+    d = 2 ; n = 1; k = 4 ;
+    Ho = HOrth(d,n,k,0,1);
+    Hi = Hising(d,n,k,1);
+    Hu = oneUpforVec(d,n,k,0,1);
+    if n>1 
+        Hm = HMubs(d,n,k,0,1);
+    end
+
+
+    open("DHoHu"*string(d)*"n"*string(n)*"k"*string(k)*".dat","w") do io
+        writedlm(io,Ho+Hu)
+    end
 end
