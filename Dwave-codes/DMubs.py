@@ -40,7 +40,7 @@ def n_graph(n,fname,b,itr):
     bqm = BinaryQuadraticModel({}, {}, 0, 'SPIN')
     bqm.offset = 0
     # iterations in the anealing
-    #itr = 1#200    # más interaciones más tiempo?                    
+    #itr = 1#200    # mas interaciones mas tiempo?                    
 
     # Build a graph with from RelPad & Jlr
     fl = 0
@@ -48,7 +48,7 @@ def n_graph(n,fname,b,itr):
         bqm.add_variable(i, b)
         for k in range(n):
             if Jik[i,k] > 1e-14:
-                bqm.add_interaction(i, k, Jik[i,k])     # small graph for test
+                bqm.add_interaction(i, k, Jik[i,k])    
                 fl = 1
     print(bqm)
 
@@ -79,18 +79,18 @@ def n_graph(n,fname,b,itr):
     print(solver_time)
     # print('sampleset.info', sampleset.info)
 
-    f = open("ssDHoHu2n1k2a.txt", "w")
+    f = open("ss"+fname+"itr"+str(itr)+"a.txt", "w")
     for sample in sampleset:
         f.write(str(sample)+'\n')
     f.close()
 
-    f = open("ssDHoHu2n1k2b.txt", "w")
+    f = open("ss"+fname+"itr"+str(itr)+"b.txt", "w")
     f.write(str(sampleset))
     f.close()
 
     sample = sampleset.first.sample
     # print("Sample:\n", sample)
-    f = open("outGraph"+fname+".txt", "a")
+    f = open("outGraph"+fname+"itr"+str(itr)+".txt", "a")
     f.write(f'{n} node graph\n')
     f.write(str(sample)+'\n')
     f.write(solver_time + '\n')
@@ -197,16 +197,16 @@ if __name__ == "__main__":
 
     d = 2
     N = 1
-    k = 2
-    Nqb = d*N*k**N
+    k = 4
+    Nqb = d*N*k**d
 
   # DHoHu2n1k2.dat   DHoHu2n1k4.dat      DHoHuHm2n2k4.dat
     # solo orth        ort en 4 fases      orth, mubs en 4 fases
-    #    4                  26/                  42         valores para b
-    fname = "DHoHu2n1k2.dat"
-    b = 4
-    iter = 
-    print("Building graph with {n} nodes.".format(n=n))
+    #    4                  26                  42         valores para b
+    fname = "DHoHu2n1k4.dat"
+    b = 26
+    itr = 1
+    print("Building Ising for Matrices {n} nodes.".format(n=Nqb))
     solution = n_graph(Nqb,fname,b, itr)
 
  #   if is_valid_solution(n, solution):
