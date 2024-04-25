@@ -11,7 +11,7 @@ from collections import Counter
 
 import numpy as np
 import matplotlib
-matplotlib.use("agg")    # must select backend before importing pyplot
+matplotlib.use("agg")    # must select backend before imaporting pyplot
 import matplotlib.pyplot as plt
 from dimod import BinaryQuadraticModel
 from dwave.system import LeapHybridSampler
@@ -36,13 +36,14 @@ def n_graph(n,fname,b,itr):
     """
     # read graph
     Jik = np.genfromtxt("../HamiltonianForIsingDwave/"+fname)#, delimiter=" ") 
-  
     bqm = BinaryQuadraticModel({}, {}, 0, 'SPIN')
     bqm.offset = 0
     # iterations in the anealing
     #itr = 1#200    # mas interaciones mas tiempo?                    
 
-    # Build a graph with from RelPad & Jlr
+    # ===============================================================================
+    # ======= Build a graph with from file fname ====================================
+    # ===============================================================================
     fl = 0
     for i in range(n):
         bqm.add_variable(i, b)
@@ -55,16 +56,20 @@ def n_graph(n,fname,b,itr):
     if fl == 0:
         print("Error en Jik")
         exit()
-    
+
+    # ===============================================================================
+    # ====== Selecto solver method ==================================================
+    # ===============================================================================
+
     print('solver started...')
     start_time = time()
-
     
     # QPU select the sampler
     # sampler = EmbeddingComposite(DWaveSampler(solver=dict(topology__type='pegasus')))
     # sampler = EmbeddingComposite(DWaveSampler(solver=dict(topology__type='zephyr')))
-    sampler = EmbeddingComposite(DWaveSampler())   
-    sampleset = sampler.sample(bqm, num_reads=itr, label=f'{n} Ortogonalidad {start_time}')
+    
+    #sampler = EmbeddingComposite(DWaveSampler())   
+    #sampleset = sampler.sample(bqm, num_reads=itr, label=f'{n} Ortogonalidad {start_time}')
 
     # Hybrid Solver
     # sampler = LeapHybridSampler()
@@ -72,36 +77,48 @@ def n_graph(n,fname,b,itr):
     # print('quota_conversion_rate', sampler.properties['quota_conversion_rate'])
 
     # CPU
-    # sampler = neal.SimulatedAnnealingSampler()
-    # sampleset = sampler.sample(bqm, num_reads=itr)
-      
+    sampler = neal.SimulatedAnnealingSampler()
+    sampleset = sampler.sample(bqm, num_reads=itr)
+
     solver_time = f'finished in {time()-start_time} seconds'
     print(solver_time)
     # print('sampleset.info', sampleset.info)
 
-    f = open("ss"+fname+"itr"+str(itr)+"a.txt", "w")
-    for sample in sampleset:
-        f.write(str(sample)+'\n')
+    # ===============================================================================
+    # ====== Save some infomation  ==================================================
+    # ===============================================================================
+
+    f = open("Cs"+fname[0:-4]+"itr"+str(itr)+"state.txt", "w")
+    minst = sampleset.record.sample[0]
+    for qbst in minst:
+        f.write(str(qbst)+'\n')
     f.close()
 
-    f = open("ss"+fname+"itr"+str(itr)+"b.txt", "w")
-    f.write(str(sampleset))
-    f.close()
+    #f = open("Css"+fname+"itr"+str(itr)+"b.txt", "w")
+    #f.write(str(sampleset))
+    #f.write(sampleset)
+    #f.close()
 
     sample = sampleset.first.sample
     # print("Sample:\n", sample)
-    f = open("outGraph"+fname+"itr"+str(itr)+".txt", "a")
+    f = open("CoutGraph"+fname[0:-4]+"itr"+str(itr)+".txt", "a")
     f.write(f'{n} node graph\n')
     f.write(str(sample)+'\n')
     f.write(solver_time + '\n')
     f.write(str(sampleset.info)+'\n')
     f.close()
 
-    
-    # Inspect
-    dwave.inspector.show(sampleset)
-    return sample
+    # Inspect note: with a clasical solver the ispector doesnt work
+    #dwave.inspector.show(sampleset)
+    return sampleset
 
+"""
+notas para el save  
+    sampleset.record.sample   para array
+                    .energy  para las energías 
+
+
+"""
 
 def is_valid_solution(n, solution):
     """Check energy
@@ -120,7 +137,6 @@ def is_valid_solution(n, solution):
     print(sols[1,:])
 
     return np.array_equal(sol,sols[0,:]) or np.array_equal(sol,sols[1,:])
-
 
 def plot_graph(n, sol):
     """Create a chessboard with queens using matplotlib. Image is saved
@@ -207,7 +223,10 @@ if __name__ == "__main__":
     b = 26
     itr = 1
     print("Building Ising for Matrices {n} nodes.".format(n=Nqb))
-    solution = n_graph(Nqb,fname,b, itr)
+    solutionset = n_graph(Nqb,fname,b, itr)
+
+    minst = solutionset.record.sample
+    print(minst)
 
  #   if is_valid_solution(n, solution):
  #       write = "Solution is valid."
