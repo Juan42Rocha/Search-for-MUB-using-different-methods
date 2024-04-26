@@ -68,8 +68,8 @@ def n_graph(n,fname,b,itr):
     # sampler = EmbeddingComposite(DWaveSampler(solver=dict(topology__type='pegasus')))
     # sampler = EmbeddingComposite(DWaveSampler(solver=dict(topology__type='zephyr')))
     
-    #sampler = EmbeddingComposite(DWaveSampler())   
-    #sampleset = sampler.sample(bqm, num_reads=itr, label=f'{n} Ortogonalidad {start_time}')
+    sampler = EmbeddingComposite(DWaveSampler())   
+    sampleset = sampler.sample(bqm, num_reads=itr, label=f'{n} Ortogonalidad {start_time}')
 
     # Hybrid Solver
     # sampler = LeapHybridSampler()
@@ -77,8 +77,8 @@ def n_graph(n,fname,b,itr):
     # print('quota_conversion_rate', sampler.properties['quota_conversion_rate'])
 
     # CPU
-    sampler = neal.SimulatedAnnealingSampler()
-    sampleset = sampler.sample(bqm, num_reads=itr)
+    #sampler = neal.SimulatedAnnealingSampler()
+    #sampleset = sampler.sample(bqm, num_reads=itr)
 
     solver_time = f'finished in {time()-start_time} seconds'
     print(solver_time)
@@ -88,10 +88,12 @@ def n_graph(n,fname,b,itr):
     # ====== Save some infomation  ==================================================
     # ===============================================================================
 
-    f = open("Cs"+fname[0:-4]+"itr"+str(itr)+"state.txt", "w")
-    minst = sampleset.record.sample[0]
-    for qbst in minst:
-        f.write(str(qbst)+'\n')
+    f = open("Qs"+fname[0:-4]+"itr"+str(itr)+"state.txt", "w")
+    minst = sampleset.record.sample
+    for nqb in range(n):
+        for i in range(itr):
+            f.write(str(minst[i,nqb])+"   ")
+        f.write("\n")
     f.close()
 
     #f = open("Css"+fname+"itr"+str(itr)+"b.txt", "w")
@@ -101,11 +103,13 @@ def n_graph(n,fname,b,itr):
 
     sample = sampleset.first.sample
     # print("Sample:\n", sample)
-    f = open("CoutGraph"+fname[0:-4]+"itr"+str(itr)+".txt", "a")
+    f = open("QoutGraph"+fname[0:-4]+"itr"+str(itr)+".txt", "a")
     f.write(f'{n} node graph\n')
     f.write(str(sample)+'\n')
     f.write(solver_time + '\n')
     f.write(str(sampleset.info)+'\n')
+    f.write(str(sampleset.record.energy)+"\n")
+    f.write(str(sampleset.record.num_occurrences)+"\n")
     f.close()
 
     # Inspect note: with a clasical solver the ispector doesnt work
@@ -212,16 +216,16 @@ def plot_graph(n, sol):
 if __name__ == "__main__":
 
     d = 2
-    N = 1
+    N = 2
     k = 4
     Nqb = d*N*k**d
 
   # DHoHu2n1k2.dat   DHoHu2n1k4.dat      DHoHuHm2n2k4.dat
     # solo orth        ort en 4 fases      orth, mubs en 4 fases
     #    4                  26                  42         valores para b
-    fname = "DHoHu2n1k4.dat"
-    b = 26
-    itr = 1
+    fname = "DHoHuHm2n2k4.dat"
+    b = 42
+    itr = 5
     print("Building Ising for Matrices {n} nodes.".format(n=Nqb))
     solutionset = n_graph(Nqb,fname,b, itr)
 
