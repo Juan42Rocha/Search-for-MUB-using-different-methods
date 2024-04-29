@@ -88,7 +88,7 @@ def n_graph(n,fname,b,itr):
     # ====== Save some infomation  ==================================================
     # ===============================================================================
 
-    f = open("Qs"+fname[0:-4]+"itr"+str(itr)+"state.txt", "w")
+    f = open(fname[0:-4]+"/Qs"+fname[0:-4]+"itr"+str(itr)+"state.txt", "w")
     minst = sampleset.record.sample
     for nqb in range(n):
         for i in range(itr):
@@ -103,7 +103,7 @@ def n_graph(n,fname,b,itr):
 
     sample = sampleset.first.sample
     # print("Sample:\n", sample)
-    f = open("QoutGraph"+fname[0:-4]+"itr"+str(itr)+".txt", "a")
+    f = open(fname[0:-4]+"/QoutGraph"+fname[0:-4]+"itr"+str(itr)+".txt", "a")
     f.write(f'{n} node graph\n')
     f.write(str(sample)+'\n')
     f.write(solver_time + '\n')
@@ -113,7 +113,7 @@ def n_graph(n,fname,b,itr):
     f.close()
 
     # Inspect note: with a clasical solver the ispector doesnt work
-    #dwave.inspector.show(sampleset)
+    dwave.inspector.show(sampleset)
     return sampleset
 
 """
@@ -225,7 +225,7 @@ if __name__ == "__main__":
     #    4                  26                  42         valores para b
     fname = "DHoHuHm2n2k4.dat"
     b = 42
-    itr = 5
+    itr = 1
     print("Building Ising for Matrices {n} nodes.".format(n=Nqb))
     solutionset = n_graph(Nqb,fname,b, itr)
 
