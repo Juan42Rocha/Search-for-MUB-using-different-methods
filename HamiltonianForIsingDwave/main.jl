@@ -32,16 +32,16 @@ function main()
 end
 
 function Nminst()
-    d = 2 ; n = 2; k = 2;
-    Ho = HOrth(d,n,k,0,1);
-    Hi = Hising(d,n,k,2);
+    d = 2 ; n = 1; k = 2;
+    Ho = HOrth(d,n,k,-1,0);
+    Hi = Hising(d,n,k,1);
     Hu = oneUpforVec(d,n,k,0,1);
     
     B = collect(-7:0.01:7);
-    of = open("HoHu-B-d"*string(2)*"n"*string(n)*"k"*string(k)*".dat","w");
+    of = open("HooHi-Bm7-7-d"*string(2)*"n"*string(n)*"k"*string(k)*".dat","w");
    
     for b in B;
-        Em,t = findM(Ho+Hu,b);
+        Em,t = findM(Ho+Hi,b);
         nt = size(t,1);
         mt = mean(sum.(VecConf.(t.-1,n*d*d^k)));
         @printf(of,"%f    %f   %f   %f\n",b,nt,Em,mt);
@@ -82,7 +82,7 @@ end
 
 
 function Dsave();
-    d = 2 ; n = 1; k = 4 ;
+    d = 2 ; n = 1; k = 2 ;
     Ho = HOrth(d,n,k,0,1);
     Hi = Hising(d,n,k,1);
     Hu = oneUpforVec(d,n,k,0,1);
