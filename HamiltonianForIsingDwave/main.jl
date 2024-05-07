@@ -32,20 +32,20 @@ function main()
 end
 
 function Nminst()
-    d = 2 ; n = 1; k = 2;
+    d = 2 ; n = 2; k = 2;
     Ho = HOrth(d,n,k,-1,0);
-    Hi = Hising(d,n,k,1);
+    Hi = Hising(d,n,k,2);
     Hu = oneUpforVec(d,n,k,0,1);
     
-    B = collect(-7:0.01:7);
-    of = open("HooHi-Bm7-7-d"*string(2)*"n"*string(n)*"k"*string(k)*".dat","w");
+    B = collect(0:0.01:5);
+    of = open("HooHi2-Bm0-5-d"*string(2)*"n"*string(n)*"k"*string(k)*".dat","w");
    
     for b in B;
         Em,t = findM(Ho+Hi,b);
         nt = size(t,1);
         mt = mean(sum.(VecConf.(t.-1,n*d*d^k)));
         @printf(of,"%f    %f   %f   %f\n",b,nt,Em,mt);
-        println(b,"" ,nt," ",Em," " ,mt)
+        println(b," " ,nt," ",Em," " ,mt)
     end
    
     close(of);
