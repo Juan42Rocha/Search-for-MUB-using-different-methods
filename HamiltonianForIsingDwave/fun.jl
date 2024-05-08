@@ -290,7 +290,9 @@ function Energiast(st,H,Jsi);
     return sum(st'*H*st) + sum(st)*Jsi;
 end
 
-
+#
+# Crea interacciones para Ortogonalidad
+#
 function Ortogonalidadold(d,k,a,b)
     kd = k^d;  # numero de qubits para representar un vector
     Hsub = zeros(kd,kd);
@@ -317,7 +319,9 @@ function Ortogonalidadold(d,k,a,b)
 
 end
 
-
+#
+# Crea interacciones para  ising
+#
 function Hising(d,n,k,b);
     H = zeros(d^k,d^k);  
     for i in 1:d^k-1
@@ -327,4 +331,12 @@ function Hising(d,n,k,b);
     H = kron(I(d),H);
     H = kron(I(n),H);
     return H;
+end
+
+
+function checkOneSol(st,d,n,k);
+    v = reshape(st,(k^d,n*d))
+    v = (v.+1)./2;
+    
+
 end

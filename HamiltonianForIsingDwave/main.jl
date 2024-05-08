@@ -14,9 +14,9 @@ include("fun.jl")
 
 
 function main()
-    d = 2; n = 1; k = 2;
+    d = 2; n = 2; k = 2;
     Hu =  oneUpforVec(d,n,k,0,1);
-    Ho  =  HOrth(d,n,k,0,1);
+    Ho  =  HOrth(d,n,k,0,1);  
     Hi  = Hising(d,n,k,2);
     if n>1 
         Hm = HMubs(d,n,k,0,1)
@@ -34,14 +34,14 @@ end
 function Nminst()
     d = 2 ; n = 2; k = 2;
     Ho = HOrth(d,n,k,-1,0);
-    Hi = Hising(d,n,k,2);
+    Hi = Hising(d,n,k,1);
     Hu = oneUpforVec(d,n,k,0,1);
     
     B = collect(0:0.01:5);
-    of = open("HooHi2-Bm0-5-d"*string(2)*"n"*string(n)*"k"*string(k)*".dat","w");
+    of = open("HooHu2-Bm0-5-d"*string(2)*"n"*string(n)*"k"*string(k)*".dat","w");
    
     for b in B;
-        Em,t = findM(Ho+Hi,b);
+        Em,t = findM(Ho+Hu,b);
         nt = size(t,1);
         mt = mean(sum.(VecConf.(t.-1,n*d*d^k)));
         @printf(of,"%f    %f   %f   %f\n",b,nt,Em,mt);
@@ -83,6 +83,7 @@ end
 
 function Dsave();
     d = 2 ; n = 1; k = 2 ;
+
     Ho = HOrth(d,n,k,0,1);
     Hi = Hising(d,n,k,1);
     Hu = oneUpforVec(d,n,k,0,1);
