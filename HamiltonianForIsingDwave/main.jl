@@ -14,31 +14,47 @@ include("fun.jl")
 
 
 function main()
-    d = 2; n = 2; k = 2;
-    Hu =  oneUpforVec(d,n,k,0,1);
-    Ho  =  HOrth(d,n,k,0,1);  
+    d = 2; n = 1; k = 2;
+    Hu =  oneUpforVec(d,n,k,0,2);
+    Ho  =  HOrth(d,n,k,-1,0);  
     Hi  = Hising(d,n,k,2);
     if n>1 
         Hm = HMubs(d,n,k,0,1)
     end
     
+    cont1 = 0;
+    cont2 = 0;
+    for ik in 1:10000;
+    st ,E = findMS(Ho+Hu+Hm,27,30,0);st'
+    M = ConverStToVec(st,d,n,k);
+
+    if  M != [];
+        isO = CheckOrthM(M,d,n,k);
+        isM = CheckMubsM(M,d,n,k);
+        cont1 = cont1 +1;
+   # @show(isO,isM)
+    if (isO+isM) ==2;
+        cont2 = cont2 +1;
+    end
+    end
+    end
   # H = [-1  1  1 1 ;
   #      0  -1 1  1;
-  #      0  0  -1 1;
+  #   11   0  0  -1 1;
   #      0  0  0  -1];
   # E = Energia(H);
-  
+  return cont1,cont2;
 
 end
 
 function Nminst()
-    d = 2 ; n = 2; k = 2;
+    d = 2 ; n = 1; k = 2;
     Ho = HOrth(d,n,k,-1,0);
     Hi = Hising(d,n,k,1);
     Hu = oneUpforVec(d,n,k,0,2);
     
-    B = collect(0:0.01:5);
-    of = open("HooHu2-Bm0-5-d"*string(2)*"n"*string(n)*"k"*string(k)*".dat","w");
+    B = collect(2:0.001:6);
+    of = open("HooHu2-B2-3-d"*string(2)*"n"*string(n)*"k"*string(k)*".dat","w");
    
     for b in B;
         Em,t = findM(Ho+Hu,b);

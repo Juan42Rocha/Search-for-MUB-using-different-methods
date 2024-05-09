@@ -356,7 +356,7 @@ function ConverStToVec(st,d,n,k);
        for ij in 1:n;
            m = zeros(Complex,d,d);
            for ik in 1:d;
-               idxv = PosOnes[ik][1];
+               idxv = PosOnes[ik+(ij-1)*d][1];
 #@show(idxv,d,n,k)
                m[:,ik] = VecConFases(d,k,idxv-1);
            end
