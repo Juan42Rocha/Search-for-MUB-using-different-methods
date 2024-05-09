@@ -35,7 +35,7 @@ function Nminst()
     d = 2 ; n = 2; k = 2;
     Ho = HOrth(d,n,k,-1,0);
     Hi = Hising(d,n,k,1);
-    Hu = oneUpforVec(d,n,k,0,1);
+    Hu = oneUpforVec(d,n,k,0,2);
     
     B = collect(0:0.01:5);
     of = open("HooHu2-Bm0-5-d"*string(2)*"n"*string(n)*"k"*string(k)*".dat","w");

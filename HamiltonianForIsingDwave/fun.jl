@@ -291,7 +291,22 @@ function Energiast(st,H,Jsi);
 end
 
 #
-# Crea interacciones para Ortogonalidad
+# Crea interacciones para  ising
+#
+function Hising(d,n,k,b);
+    H = zeros(d^k,d^k);  
+    for i in 1:d^k-1
+        H[i,i+1] = b;
+    end
+    H[d^k,1] = b;
+    H = kron(I(d),H);
+    H = kron(I(n),H);
+    return H;
+end
+
+
+#
+# Crea interacciones para Ortogonalidad old
 #
 function Ortogonalidadold(d,k,a,b)
     kd = k^d;  # numero de qubits para representar un vector
@@ -319,24 +334,63 @@ function Ortogonalidadold(d,k,a,b)
 
 end
 
-#
-# Crea interacciones para  ising
-#
-function Hising(d,n,k,b);
-    H = zeros(d^k,d^k);  
-    for i in 1:d^k-1
-        H[i,i+1] = b;
-    end
-    H[d^k,1] = b;
-    H = kron(I(d),H);
-    H = kron(I(n),H);
-    return H;
+
+
+function CheckOneSol(st,d,n,k);
+    M = ConverStToVec(st,d,n,k);
+    
+    for ij in 1:n;
+        
+
+    end   
+
 end
-
-
-function checkOneSol(st,d,n,k);
+function ConverStToVec(st,d,n,k);
     v = reshape(st,(k^d,n*d))
     v = (v.+1)./2;
-    
+    aux = sum(sum(v,dims=1) .==1);
+    M = [];    
 
+    if aux ==n*d;
+       PosOnes = findall(isone,v);
+       for ij in 1:n;
+           m = zeros(Complex,d,d);
+           for ik in 1:d;
+               idxv = PosOnes[ik][1];
+#@show(idxv,d,n,k)
+               m[:,ik] = VecConFases(d,k,idxv-1);
+           end
+           push!(M,m);
+       end
+    else
+      a = 0;
+    end
+
+    return  M
+end
+function CheckOrthM(M,d,n,k);
+    flag = 1;
+    for ixn in n;
+        M1 = M[ixn];
+        t = sum(abs.(M1'*M1) - I(d));
+        if abs(t)>1e-14;
+            flag = 0*flag;
+        end 
+    end
+    return flag;
+end
+function CheckMubsM(M,d,n,k);
+   flag = 1; 
+
+    for inx in 1:n-1;
+        M1 = M[inx];
+        for jnx in inx+1:n;
+            M2 = M[jnx];
+            t = sum( abs.(M1'*M2) - ones(d,d)./sqrt(d) );
+            if abs(t)> 1e-14;
+                flag = flag*0;
+            end 
+        end 
+    end
+    return flag;
 end
