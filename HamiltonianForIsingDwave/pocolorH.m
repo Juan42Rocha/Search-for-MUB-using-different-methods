@@ -1,4 +1,4 @@
-file = "Horth2n0k4.dat";
+file = "Horth2n0k2.dat";
 h = load(file);
 
 Nqb = size(h,1);
@@ -8,6 +8,9 @@ H(1:Nqb,1:Nqb) = h;
 [X,Y] = meshgrid(1:Nqb+1,Nqb+1:-1:1);
 
 pcolor(X,Y,H)
+
+colorbar
+caxis([-1,1])
 
 
 

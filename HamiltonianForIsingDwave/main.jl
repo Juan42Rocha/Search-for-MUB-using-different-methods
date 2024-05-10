@@ -14,7 +14,7 @@ include("fun.jl")
 
 
 function main()
-    d = 2; n = 1; k = 2;
+    d = 2; n = 2; k = 4;
     Hu =  oneUpforVec(d,n,k,0,2);
     Ho  =  HOrth(d,n,k,-1,0);  
     Hi  = Hising(d,n,k,2);
@@ -24,8 +24,8 @@ function main()
     
     cont1 = 0;
     cont2 = 0;
-    for ik in 1:10000;
-    st ,E = findMS(Ho+Hu+Hm,27,30,0);st'
+    for ik in 1:10;
+    st ,E = findMS(Ho+Hu+Hm,41,1000,3);st'
     M = ConverStToVec(st,d,n,k);
 
     if  M != [];
@@ -72,26 +72,28 @@ end
 
 
 function saveH()
-    d = 2 ; n = 2; k =4 ;
-    Ho = HOrth(d,n,k,0,1);
+    d = 2 ; n = 1; k =2 ;
+    Ho = HOrth(d,n,k,-1,0);
     Hi = Hising(d,n,k,1);
-    Hu = oneUpforVec(d,n,k,0,1);
+    Hu = oneUpforVec(d,n,k,0,2);
     if n>1 
         Hm = HMubs(d,n,k,0,1);
+    else
+        Hm = zeros(n*k^d,n*k^d);
     end
 
-    # Horht= Ortogonalidad(d,k,0,1);
+    # Horht= Ortogonalidad(d,k,-1,0);
     # Hmub = Mubsness(d,k,0,1);
-    #  open("Horht"*string(d)*"n"*string(n-1)*"k"*string(k)*".dat","w") do io
-    #     writedlm(io,Horht)
-    # end
+    #open("Hmat/Hoorht"*string(d)*"n"*string(n-1)*"k"*string(k)*".dat","w") do io
+    #    writedlm(io,Horht)
+    #end
     # open("Hmubs"*string(d)*"n"*string(n-1)*"k"*string(k)*".dat","w") do io
     #     writedlm(io,Hmub)
     # end  
  
-   
-    open("HoHi"*string(d)*"n"*string(n)*"k"*string(k)*".dat","w") do io
-        writedlm(io,Ho+Hi)
+   # corregir DhoHmHu esta mal lo sobre escribir por error  con DHooHmHu
+    open("Hmat/DHooHmHu"*string(d)*"n"*string(n)*"k"*string(k)*".dat","w") do io
+        writedlm(io,Ho+Hu+Hm)
     end
 
 end
