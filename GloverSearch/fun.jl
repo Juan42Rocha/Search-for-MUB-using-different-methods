@@ -5,30 +5,28 @@ using Random
 using DelimitedFiles
 
 
-function check(val1);
-    t = digits(val1,base=2,pad=16)';
-    ts = reshape(t,(4,4))';
-    pw = 2 .^collect(0:4-1);
-    nst = ts*pw;
 
-    v = VecConFases.(d,k,ts*pw);
-    
-    o12 = abs(v[1]'*v[2]);
-    o34 = abs(v[3]'*v[4]);
+function CcircuitOrth(d,k)
+    Out =  [];
 
-    M13 = abs(v[1]'*v[3]);
-    M14 = abs(v[1]'*v[4]);
-    M23 = abs(v[2]'*v[3]);
-    M24 = abs(v[2]'*v[4]);    
-
-    @show(o12,o34,M13,M14,M23,M24)
-
+    for nv1 in 0:k^d-1;
+        v1 = VecConFases(d,k,nv1);
+        for nv2 in 0:k^d-1;
+            v2 = VecConFases(d,k,nv2);
+            o12 = IsOrthogonality(v1,v2);
+            if o12 == 1;      # si v1 y v2 no son ortogonales no importa v3 y v4
+                 val = FushNum2(d,k,nv1,nv2);
+                 push!(Out,val);
+             end           
+            
+        end
+    end
+    return Out
 end
 
 
+
 function COracle(d,n,k);
-
-
     OrOnes =  [];
 
     for nv1 in 0:k^d-1;
@@ -61,6 +59,17 @@ function COracle(d,n,k);
     return OrOnes;
 end
 
+function  FushNum2(d,k,nv1,nv2);
+    st1 = digits(nv1,base=2,pad=4)';
+    st2 = digits(nv2,base=2,pad=4)';
+
+    st = [ st2 st1];
+    pw = 2 .^collect(0:7)';
+    val = sum(st .* pw);
+    return val
+end
+
+
 function  FushNum(d,n,k,nv1,nv2,nv3,nv4);
     st1 = digits(nv1,base=2,pad=4)';
     st2 = digits(nv2,base=2,pad=4)';
@@ -71,6 +80,27 @@ function  FushNum(d,n,k,nv1,nv2,nv3,nv4);
     val = sum(st .* pw);
     return val
 end
+
+function check(val1);
+    t = digits(val1,base=2,pad=16)';
+    ts = reshape(t,(4,4))';
+    pw = 2 .^collect(0:4-1);
+    nst = ts*pw;
+
+    v = VecConFases.(d,k,ts*pw);
+    
+    o12 = abs(v[1]'*v[2]);
+    o34 = abs(v[3]'*v[4]);
+
+    M13 = abs(v[1]'*v[3]);
+    M14 = abs(v[1]'*v[4]);
+    M23 = abs(v[2]'*v[3]);
+    M24 = abs(v[2]'*v[4]);    
+
+    @show(o12,o34,M13,M14,M23,M24)
+
+end
+
 
 #
 # Crea el vector las configuracion de las fases
@@ -99,7 +129,7 @@ end
 # vectores cumple la relga de mubs
 #  v1, v2 son vectores de norma 1
 function IsMubs(v1,v2);
-    #d,t = size(v1)
+    d = size(v1,1);
     flag = 0;
     t = 1/sqrt(d) -abs(v1'*v2);
     if abs(t)< 1e-14;
