@@ -6,6 +6,56 @@ using DelimitedFiles
 
 
 
+#  en logisim  and es solo eun espacio 
+#   a & b ==  a b
+#  
+#  y or es con una suma  
+#  a or b == a + b
+#
+# la negacion es  este simbolo
+# las tablas en logisim es de izquierda a derecha 
+# aqui estoy hacienod las cosas de derecha a izquierda 
+# en logisim  2 en binario es  10 
+# aqui es     2 es             01
+function ConverSt2logisimCir(sts);
+ num = size(sts,1);
+ var = "hgfedcba";
+ t= digits.(sts,base=2,pad=8);
+
+ for k in 1:num;
+     for i in 1:8;
+       if t[k][i]==0
+          print("~")
+       end
+       print(var[i:i]*" ")
+     end
+     print("+ ")
+ end
+
+
+end
+
+
+# tabla pra mubsness
+function CcircuitMubsness(d,k)
+    Out =  [];
+
+    for nv1 in 0:k^d-1;
+        v1 = VecConFases(d,k,nv1);
+        for nv2 in 0:k^d-1;
+            v2 = VecConFases(d,k,nv2);
+            o12 = IsMubs(v1,v2);
+            if o12 == 1;      # si v1 y v2 no son ortogonales no importa v3 y v4
+                 val = FushNum2(d,k,nv1,nv2);
+                 push!(Out,val);
+             end           
+            
+        end
+    end
+    return Out
+end
+
+# tabla para ortogonallidad
 function CcircuitOrth(d,k)
     Out =  [];
 
@@ -25,7 +75,7 @@ function CcircuitOrth(d,k)
 end
 
 
-
+# tabla total final
 function COracle(d,n,k);
     OrOnes =  [];
 
@@ -59,6 +109,8 @@ function COracle(d,n,k);
     return OrOnes;
 end
 
+#
+# fusiona dos vectos 
 function  FushNum2(d,k,nv1,nv2);
     st1 = digits(nv1,base=2,pad=4)';
     st2 = digits(nv2,base=2,pad=4)';
@@ -66,10 +118,11 @@ function  FushNum2(d,k,nv1,nv2);
     st = [ st2 st1];
     pw = 2 .^collect(0:7)';
     val = sum(st .* pw);
+    @show(st,val)
     return val
 end
 
-
+# fusiona los 4 vectores
 function  FushNum(d,n,k,nv1,nv2,nv3,nv4);
     st1 = digits(nv1,base=2,pad=4)';
     st2 = digits(nv2,base=2,pad=4)';
@@ -81,6 +134,7 @@ function  FushNum(d,n,k,nv1,nv2,nv3,nv4);
     return val
 end
 
+# revisa si es una mubb n=2 d=2 k=4
 function check(val1);
     t = digits(val1,base=2,pad=16)';
     ts = reshape(t,(4,4))';
